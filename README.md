@@ -137,6 +137,6 @@ Built under strict Azure Free Trial constraints (~$200 budget):
 
 ---
 
-## 📜 License & Portfolio Usage
+## 📜 Usage & Scope
 
-This project is created for professional portfolio demonstration and Azure Data Engineering technical interview defense.
+ApexCare is an end-to-end reference implementation of a modern healthcare data platform on Microsoft Azure, demonstrating scalable batch and real-time data processing, medallion architecture, governance, security, analytics, and automated data operations.
