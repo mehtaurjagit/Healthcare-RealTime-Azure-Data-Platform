@@ -1,0 +1,31 @@
+# Environment & Credentials
+.env
+*.env
+*.key
+*.pem
+*.pfx
+secrets/
+credentials.json
+
+# Python & Virtual Environments
+__pycache__/
+*.py[cod]
+*$py.class
+.venv/
+venv/
+ENV/
+env/
+
+# Operating System & IDE Metadata
+.DS_Store
+Thumbs.db
+.idea/
+.vscode/
+*.swp
+*.tmp
+
+# Databricks & Temporary Logs
+*.log
+.sparkStaging/
+metastore_db/
+derby.log

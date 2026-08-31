@@ -1,0 +1,26 @@
+DepartmentID,DepartmentName,FacilityName
+DEPT_001,ICU Ward A #1,ApexCare Regional Hospital Central
+DEPT_002,Cardiology Clinic #2,ApexCare Regional Hospital South
+DEPT_003,ICU Ward A #5,ApexCare Regional Hospital North
+DEPT_004,Neurology Suite #1,ApexCare Regional Hospital North
+DEPT_005,ICU Ward A #2,ApexCare Regional Hospital South
+DEPT_006,Emergency Department #5,ApexCare Regional Hospital South
+DEPT_007,Neurology Suite #2,ApexCare Regional Hospital East
+DEPT_008,Outpatient Surgery #1,ApexCare Regional Hospital South
+DEPT_009,Neurology Suite #3,ApexCare Regional Hospital Central
+DEPT_010,ICU Ward B #2,ApexCare Regional Hospital Central
+DEPT_011,ICU Ward A #1,ApexCare Regional Hospital East
+DEPT_012,ICU Ward A #3,ApexCare Regional Hospital Central
+DEPT_013,Outpatient Surgery #1,ApexCare Regional Hospital East
+DEPT_014,ICU Ward A #4,ApexCare Regional Hospital North
+DEPT_015,Outpatient Surgery #5,ApexCare Regional Hospital Central
+DEPT_016,Cardiology Clinic #1,ApexCare Regional Hospital North
+DEPT_017,Cardiology Clinic #3,ApexCare Regional Hospital North
+DEPT_018,Cardiology Clinic #1,ApexCare Regional Hospital East
+DEPT_019,Outpatient Surgery #4,ApexCare Regional Hospital Central
+DEPT_020,ICU Ward B #3,ApexCare Regional Hospital Central
+DEPT_021,Cardiology Clinic #3,ApexCare Regional Hospital North
+DEPT_022,ICU Ward B #5,ApexCare Regional Hospital South
+DEPT_023,ICU Ward B #4,ApexCare Regional Hospital East
+DEPT_024,Outpatient Surgery #5,ApexCare Regional Hospital South
+DEPT_025,General Pediatrics #1,ApexCare Regional Hospital South

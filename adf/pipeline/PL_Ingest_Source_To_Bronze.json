@@ -1,0 +1,90 @@
+{
+  "name": "PL_Ingest_Source_To_Bronze",
+  "properties": {
+    "description": "Metadata-driven dynamic batch copy pipeline reading active ingestion control records from Azure SQL and copying raw files into Bronze storage layer.",
+    "activities": [
+      {
+        "name": "LKP_Get_Active_Control_Metadata",
+        "description": "Reads active batch ingestion entities from meta.IngestionControl",
+        "type": "Lookup",
+        "dependsOn": [],
+        "policy": {
+          "timeout": "0.00:10:00",
+          "retry": 1,
+          "retryIntervalInSeconds": 30
+        },
+        "typeProperties": {
+          "source": {
+            "type": "AzureSqlSource",
+            "sqlReaderQuery": "SELECT SourceID, SourceSystem, EntityName, SourceFormat, SourceFolderPath, TargetBronzePath, IngestionType, WatermarkColumn, WatermarkValue FROM meta.IngestionControl WHERE IsActive = 1 AND IngestionType != 'STREAMING';"
+          },
+          "dataset": {
+            "referenceName": "ds_sqldb_lookup",
+            "type": "DatasetReference"
+          },
+          "firstRowOnly": false
+        }
+      },
+      {
+        "name": "FE_Process_Each_Entity",
+        "description": "Iterates through each active ingestion control entity",
+        "type": "ForEach",
+        "dependsOn": [
+          {
+            "activity": "LKP_Get_Active_Control_Metadata",
+            "dependencyConditions": ["Succeeded"]
+          }
+        ],
+        "typeProperties": {
+          "isSequential": false,
+          "batchCount": 4,
+          "items": {
+            "value": "@activity('LKP_Get_Active_Control_Metadata').output.value",
+            "type": "Expression"
+          },
+          "activities": [
+            {
+              "name": "COPY_Raw_To_Bronze",
+              "type": "Copy",
+              "dependsOn": [],
+              "typeProperties": {
+                "source": {
+                  "type": "BinarySource",
+                  "storeSettings": {
+                    "type": "AzureBlobFSReadSettings",
+                    "recursive": true,
+                    "wildcardFileName": "*"
+                  }
+                },
+                "sink": {
+                  "type": "BinarySink",
+                  "storeSettings": {
+                    "type": "AzureBlobFSSinkWriteSettings"
+                  }
+                }
+              },
+              "inputs": [
+                {
+                  "referenceName": "ds_adls_raw_dynamic",
+                  "type": "DatasetReference",
+                  "parameters": {
+                    "FolderPath": "@item().SourceFolderPath"
+                  }
+                }
+              ],
+              "outputs": [
+                {
+                  "referenceName": "ds_adls_bronze_dynamic",
+                  "type": "DatasetReference",
+                  "parameters": {
+                    "FolderPath": "@item().TargetBronzePath"
+                  }
+                }
+              ]
+            }
+          ]
+        }
+      }
+    ]
+  }
+}

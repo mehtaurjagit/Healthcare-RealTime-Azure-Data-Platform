@@ -1,0 +1,301 @@
+ProviderID,NPI_Number,ProviderName,Specialty,DepartmentID
+PROV_0001,4529615275,Dr. Maria Hernandez,Pediatrics,DEPT_009
+PROV_0002,1284277889,Dr. Charles Hernandez,Internal Medicine,DEPT_021
+PROV_0003,7439149233,Dr. Rahul Anderson,ICU Critical Care,DEPT_009
+PROV_0004,1599707677,Dr. Ananya Moore,Oncology,DEPT_009
+PROV_0005,7801222128,Dr. Barbara Davis,ICU Critical Care,DEPT_017
+PROV_0006,3119634399,Dr. Carlos Johnson,Emergency Medicine,DEPT_005
+PROV_0007,3694860228,Dr. Maria Sharma,Pediatrics,DEPT_020
+PROV_0008,5567816720,Dr. Richard Mehta,General Surgery,DEPT_017
+PROV_0009,5047709743,Dr. Priya Brown,Oncology,DEPT_025
+PROV_0010,8047877267,Dr. Patricia Martinez,Pediatrics,DEPT_006
+PROV_0011,2948728483,Dr. Ananya Rodriguez,Oncology,DEPT_025
+PROV_0012,4919706735,Dr. Rahul Martinez,Oncology,DEPT_020
+PROV_0013,1854316681,Dr. Barbara Garcia,Oncology,DEPT_025
+PROV_0014,4944899549,Dr. Karen Hernandez,General Surgery,DEPT_001
+PROV_0015,8760038701,Dr. Linda Johnson,Internal Medicine,DEPT_019
+PROV_0016,5067116918,Dr. John Thomas,Emergency Medicine,DEPT_025
+PROV_0017,1540137296,Dr. Priya Thomas,Oncology,DEPT_006
+PROV_0018,6633778586,Dr. Priya Patel,Neurology,DEPT_015
+PROV_0019,2939118223,Dr. Linda Davis,Emergency Medicine,DEPT_011
+PROV_0020,9680276057,Dr. Sarah Davis,Internal Medicine,DEPT_001
+PROV_0021,9894847574,Dr. Rahul Johnson,Internal Medicine,DEPT_003
+PROV_0022,4888749350,Dr. David Williams,Oncology,DEPT_008
+PROV_0023,3084839399,Dr. Sarah Jones,General Surgery,DEPT_008
+PROV_0024,8664882079,Dr. Maria Wilson,Internal Medicine,DEPT_004
+PROV_0025,7146318035,Dr. Susan Wilson,General Surgery,DEPT_024
+PROV_0026,9822598054,Dr. Rahul Patel,Emergency Medicine,DEPT_002
+PROV_0027,4700855390,Dr. Linda Miller,Internal Medicine,DEPT_018
+PROV_0028,2926780541,Dr. Susan Garcia,Orthopedics,DEPT_015
+PROV_0029,4965395580,Dr. Joseph Moore,Emergency Medicine,DEPT_002
+PROV_0030,2015242176,Dr. Susan Thomas,General Surgery,DEPT_007
+PROV_0031,9008612465,Dr. Mary Garcia,Pediatrics,DEPT_001
+PROV_0032,9526836552,Dr. William Anderson,Orthopedics,DEPT_014
+PROV_0033,3090237817,Dr. Michael Martinez,Internal Medicine,DEPT_002
+PROV_0034,3328710672,Dr. Ananya Hernandez,Cardiology,DEPT_002
+PROV_0035,7803990970,Dr. Thomas Taylor,ICU Critical Care,DEPT_002
+PROV_0036,1798112150,Dr. Karen Williams,Internal Medicine,DEPT_013
+PROV_0037,3553440342,Dr. Karen Williams,Pediatrics,DEPT_022
+PROV_0038,7540301973,Dr. William Miller,Neurology,DEPT_008
+PROV_0039,6435772945,Dr. Robert Sharma,Orthopedics,DEPT_015
+PROV_0040,1311570307,Dr. Joseph Mehta,Emergency Medicine,DEPT_003
+PROV_0041,3309122187,Dr. Thomas Rodriguez,ICU Critical Care,DEPT_012
+PROV_0042,4783282817,Dr. Linda Lopez,Orthopedics,DEPT_006
+PROV_0043,3271782991,Dr. Priya Moore,Orthopedics,DEPT_022
+PROV_0044,4771526597,Dr. William Brown,Emergency Medicine,DEPT_024
+PROV_0045,3376077463,Dr. William Martinez,Internal Medicine,DEPT_023
+PROV_0046,2472659626,Dr. Priya Patel,Orthopedics,DEPT_017
+PROV_0047,7393195616,Dr. Mary Williams,Pediatrics,DEPT_009
+PROV_0048,1189351213,Dr. David Jones,Orthopedics,DEPT_006
+PROV_0049,8478529823,Dr. Sarah Wilson,Oncology,DEPT_001
+PROV_0050,1480494664,Dr. Amit Jones,Oncology,DEPT_002
+PROV_0051,8879525611,Dr. Charles Moore,ICU Critical Care,DEPT_014
+PROV_0052,1547374338,Dr. Elizabeth Lopez,Cardiology,DEPT_012
+PROV_0053,5736462531,Dr. Carlos Moore,Pediatrics,DEPT_020
+PROV_0054,4218981849,Dr. Linda Garcia,ICU Critical Care,DEPT_014
+PROV_0055,1106456634,Dr. Ananya Hernandez,Pediatrics,DEPT_022
+PROV_0056,4482141802,Dr. William Garcia,Emergency Medicine,DEPT_013
+PROV_0057,4745927824,Dr. Jessica Davis,Internal Medicine,DEPT_015
+PROV_0058,6796738787,Dr. Maria Davis,Internal Medicine,DEPT_001
+PROV_0059,3834820954,Dr. Richard Hernandez,Orthopedics,DEPT_003
+PROV_0060,6493800024,Dr. Rahul Taylor,Pediatrics,DEPT_022
+PROV_0061,7597996327,Dr. James Brown,Orthopedics,DEPT_006
+PROV_0062,9519284858,Dr. Mary Brown,Pediatrics,DEPT_012
+PROV_0063,6642201119,Dr. Karen Taylor,Emergency Medicine,DEPT_013
+PROV_0064,6111349421,Dr. Mary Wilson,Cardiology,DEPT_017
+PROV_0065,3880327491,Dr. Barbara Wilson,Emergency Medicine,DEPT_022
+PROV_0066,9249648005,Dr. Karen Hernandez,Emergency Medicine,DEPT_024
+PROV_0067,9160639027,Dr. Thomas Martinez,Pediatrics,DEPT_011
+PROV_0068,1546696950,Dr. Susan Sharma,Pediatrics,DEPT_022
+PROV_0069,7739255769,Dr. Richard Moore,Cardiology,DEPT_010
+PROV_0070,2232285036,Dr. Susan Jackson,Neurology,DEPT_015
+PROV_0071,7192423780,Dr. Priya Miller,Oncology,DEPT_016
+PROV_0072,4160930353,Dr. Priya Williams,Orthopedics,DEPT_017
+PROV_0073,7954672204,Dr. John Davis,Orthopedics,DEPT_008
+PROV_0074,4464161270,Dr. Robert Smith,Cardiology,DEPT_008
+PROV_0075,9520940324,Dr. Karen Williams,General Surgery,DEPT_014
+PROV_0076,3472487690,Dr. Amit Gonzalez,General Surgery,DEPT_013
+PROV_0077,2047905204,Dr. Rahul Smith,Emergency Medicine,DEPT_025
+PROV_0078,2825989011,Dr. Jennifer Taylor,General Surgery,DEPT_002
+PROV_0079,3394039673,Dr. Patricia Anderson,ICU Critical Care,DEPT_015
+PROV_0080,7852415525,Dr. Carlos Anderson,Oncology,DEPT_014
+PROV_0081,7648059419,Dr. Jennifer Thomas,General Surgery,DEPT_009
+PROV_0082,4228856718,Dr. Rahul Rodriguez,Oncology,DEPT_016
+PROV_0083,3691864041,Dr. William Anderson,Emergency Medicine,DEPT_023
+PROV_0084,2227193073,Dr. William Hernandez,Neurology,DEPT_018
+PROV_0085,1346078411,Dr. Robert Davis,Pediatrics,DEPT_023
+PROV_0086,1918920620,Dr. Susan Wilson,Neurology,DEPT_018
+PROV_0087,7296096954,Dr. Mary Miller,Pediatrics,DEPT_013
+PROV_0088,3987248494,Dr. Carlos Jackson,Pediatrics,DEPT_016
+PROV_0089,6805759868,Dr. Carlos Gonzalez,Pediatrics,DEPT_018
+PROV_0090,6242173772,Dr. Linda Rodriguez,Pediatrics,DEPT_016
+PROV_0091,5419627962,Dr. David Sharma,Pediatrics,DEPT_024
+PROV_0092,1116402431,Dr. Rahul Wilson,ICU Critical Care,DEPT_015
+PROV_0093,1780520225,Dr. William Gonzalez,Neurology,DEPT_007
+PROV_0094,7247886041,Dr. David Gonzalez,Orthopedics,DEPT_025
+PROV_0095,7105574449,Dr. John Thomas,Cardiology,DEPT_024
+PROV_0096,3316787198,Dr. Barbara Davis,Emergency Medicine,DEPT_025
+PROV_0097,2062073697,Dr. James Mehta,ICU Critical Care,DEPT_008
+PROV_0098,5837082260,Dr. Priya Brown,Internal Medicine,DEPT_015
+PROV_0099,8299146480,Dr. Carlos Lopez,ICU Critical Care,DEPT_020
+PROV_0100,4518871744,Dr. Elizabeth Brown,Cardiology,DEPT_010
+PROV_0101,6906898409,Dr. Amit Miller,Emergency Medicine,DEPT_019
+PROV_0102,3693985578,Dr. Patricia Martinez,Emergency Medicine,DEPT_019
+PROV_0103,4361393222,Dr. Barbara Moore,Pediatrics,DEPT_022
+PROV_0104,2591589823,Dr. Thomas Patel,Neurology,DEPT_001
+PROV_0105,8943866829,Dr. Jessica Brown,Pediatrics,DEPT_012
+PROV_0106,8854238082,Dr. Amit Jones,Pediatrics,DEPT_006
+PROV_0107,7371573279,Dr. Susan Jackson,Orthopedics,DEPT_011
+PROV_0108,4658080160,Dr. John Rodriguez,General Surgery,DEPT_008
+PROV_0109,8518238399,Dr. Charles Mehta,Pediatrics,DEPT_011
+PROV_0110,5418232833,Dr. David Garcia,General Surgery,DEPT_007
+PROV_0111,6404582459,Dr. William Mehta,Orthopedics,DEPT_018
+PROV_0112,9633533290,Dr. Michael Williams,Internal Medicine,DEPT_024
+PROV_0113,7040562787,Dr. Sarah Davis,General Surgery,DEPT_021
+PROV_0114,8352307139,Dr. Joseph Smith,Emergency Medicine,DEPT_010
+PROV_0115,6246716604,Dr. Amit Davis,Orthopedics,DEPT_022
+PROV_0116,7792729530,Dr. Jessica Moore,Oncology,DEPT_012
+PROV_0117,6715705115,Dr. Amit Anderson,Orthopedics,DEPT_010
+PROV_0118,2079770569,Dr. Patricia Miller,Neurology,DEPT_004
+PROV_0119,3964229896,Dr. Michael Miller,General Surgery,DEPT_009
+PROV_0120,6128695961,Dr. Linda Lopez,ICU Critical Care,DEPT_010
+PROV_0121,9650701349,Dr. Sarah Jones,Orthopedics,DEPT_002
+PROV_0122,5184564874,Dr. Sarah Martinez,ICU Critical Care,DEPT_021
+PROV_0123,3108307952,Dr. James Jackson,Orthopedics,DEPT_016
+PROV_0124,7351029162,Dr. David Garcia,Cardiology,DEPT_009
+PROV_0125,3051831252,Dr. John Gonzalez,General Surgery,DEPT_003
+PROV_0126,3948284698,Dr. Robert Jones,Orthopedics,DEPT_003
+PROV_0127,5268845844,Dr. Patricia Moore,Pediatrics,DEPT_020
+PROV_0128,3656086594,Dr. Carlos Taylor,Pediatrics,DEPT_015
+PROV_0129,9196963901,Dr. Elizabeth Jackson,Pediatrics,DEPT_010
+PROV_0130,9848621776,Dr. Ananya Brown,Internal Medicine,DEPT_021
+PROV_0131,6201313620,Dr. Priya Williams,ICU Critical Care,DEPT_008
+PROV_0132,1322401182,Dr. James Wilson,General Surgery,DEPT_023
+PROV_0133,7845366946,Dr. Elizabeth Johnson,Internal Medicine,DEPT_010
+PROV_0134,8331319481,Dr. Amit Anderson,Emergency Medicine,DEPT_022
+PROV_0135,6144594354,Dr. Patricia Moore,Internal Medicine,DEPT_021
+PROV_0136,1610900200,Dr. Mary Garcia,Orthopedics,DEPT_020
+PROV_0137,6534540349,Dr. Patricia Anderson,Orthopedics,DEPT_023
+PROV_0138,7614170462,Dr. Joseph Williams,Cardiology,DEPT_014
+PROV_0139,8449766493,Dr. Karen Rodriguez,Cardiology,DEPT_003
+PROV_0140,8822944679,Dr. Charles Johnson,ICU Critical Care,DEPT_016
+PROV_0141,2194673401,Dr. Charles Wilson,General Surgery,DEPT_003
+PROV_0142,7313646580,Dr. Susan Hernandez,Neurology,DEPT_022
+PROV_0143,5985704790,Dr. Susan Thomas,Orthopedics,DEPT_022
+PROV_0144,9354542654,Dr. Carlos Moore,Cardiology,DEPT_015
+PROV_0145,5673181221,Dr. William Hernandez,Emergency Medicine,DEPT_025
+PROV_0146,5243939720,Dr. Priya Moore,General Surgery,DEPT_014
+PROV_0147,1232804774,Dr. Thomas Lopez,General Surgery,DEPT_021
+PROV_0148,1221670908,Dr. William Moore,ICU Critical Care,DEPT_010
+PROV_0149,8293928340,Dr. Patricia Smith,Internal Medicine,DEPT_023
+PROV_0150,5975196341,Dr. Sarah Smith,Oncology,DEPT_014
+PROV_0151,1400330495,Dr. Patricia Anderson,Emergency Medicine,DEPT_021
+PROV_0152,4574027737,Dr. Jessica Martinez,Oncology,DEPT_023
+PROV_0153,6469318275,Dr. Jessica Thomas,Internal Medicine,DEPT_015
+PROV_0154,3367665472,Dr. Richard Miller,Oncology,DEPT_024
+PROV_0155,4776677517,Dr. John Rodriguez,Pediatrics,DEPT_011
+PROV_0156,7475684019,Dr. James Martinez,Orthopedics,DEPT_019
+PROV_0157,8129391249,Dr. Robert Anderson,Oncology,DEPT_016
+PROV_0158,6777263354,Dr. Sarah Moore,Pediatrics,DEPT_015
+PROV_0159,9301537234,Dr. Michael Davis,Pediatrics,DEPT_008
+PROV_0160,2764265618,Dr. David Thomas,Pediatrics,DEPT_013
+PROV_0161,5948254671,Dr. Mary Jones,Oncology,DEPT_019
+PROV_0162,8924383984,Dr. Patricia Taylor,General Surgery,DEPT_001
+PROV_0163,4102872611,Dr. Susan Patel,ICU Critical Care,DEPT_003
+PROV_0164,9457665185,Dr. David Mehta,Pediatrics,DEPT_021
+PROV_0165,7586857685,Dr. David Patel,General Surgery,DEPT_018
+PROV_0166,9744120054,Dr. John Davis,Orthopedics,DEPT_008
+PROV_0167,4207337120,Dr. Susan Brown,Emergency Medicine,DEPT_015
+PROV_0168,1124327519,Dr. David Johnson,Orthopedics,DEPT_012
+PROV_0169,6904897514,Dr. Robert Davis,Oncology,DEPT_014
+PROV_0170,4403845222,Dr. Jennifer Garcia,Emergency Medicine,DEPT_020
+PROV_0171,9035194895,Dr. Karen Sharma,Internal Medicine,DEPT_016
+PROV_0172,1614685938,Dr. Joseph Patel,Orthopedics,DEPT_015
+PROV_0173,8750840032,Dr. Elizabeth Sharma,Oncology,DEPT_006
+PROV_0174,5612201744,Dr. Barbara Jackson,Orthopedics,DEPT_021
+PROV_0175,9426850694,Dr. Amit Rodriguez,General Surgery,DEPT_010
+PROV_0176,3075362821,Dr. Linda Gonzalez,Neurology,DEPT_019
+PROV_0177,8298348088,Dr. James Sharma,Pediatrics,DEPT_009
+PROV_0178,9624715092,Dr. Priya Johnson,General Surgery,DEPT_010
+PROV_0179,8739238825,Dr. Linda Patel,Internal Medicine,DEPT_020
+PROV_0180,5464285982,Dr. Maria Anderson,Cardiology,DEPT_019
+PROV_0181,1564409423,Dr. Elizabeth Hernandez,Pediatrics,DEPT_006
+PROV_0182,1862407093,Dr. Maria Moore,Neurology,DEPT_017
+PROV_0183,6001680218,Dr. Jessica Martinez,Neurology,DEPT_004
+PROV_0184,1323408297,Dr. Carlos Davis,Pediatrics,DEPT_018
+PROV_0185,2570991899,Dr. Maria Gonzalez,Cardiology,DEPT_009
+PROV_0186,3304560537,Dr. Joseph Lopez,Orthopedics,DEPT_019
+PROV_0187,2595467139,Dr. Priya Davis,General Surgery,DEPT_001
+PROV_0188,3620283102,Dr. Rahul Williams,General Surgery,DEPT_023
+PROV_0189,2753617371,Dr. Robert Johnson,Cardiology,DEPT_010
+PROV_0190,9572442790,Dr. Patricia Brown,Internal Medicine,DEPT_018
+PROV_0191,5877639950,Dr. Joseph Lopez,Oncology,DEPT_014
+PROV_0192,4120719599,Dr. Susan Patel,Emergency Medicine,DEPT_016
+PROV_0193,7939173425,Dr. William Johnson,Neurology,DEPT_007
+PROV_0194,7199283151,Dr. Linda Lopez,Emergency Medicine,DEPT_022
+PROV_0195,8064477344,Dr. Mary Gonzalez,Orthopedics,DEPT_007
+PROV_0196,5158416864,Dr. Joseph Williams,Internal Medicine,DEPT_021
+PROV_0197,5170814022,Dr. Mary Hernandez,Internal Medicine,DEPT_005
+PROV_0198,1881351238,Dr. Carlos Moore,Internal Medicine,DEPT_019
+PROV_0199,4735313433,Dr. David Jones,Cardiology,DEPT_009
+PROV_0200,1749459431,Dr. Priya Smith,ICU Critical Care,DEPT_001
+PROV_0201,4386287675,Dr. Charles Hernandez,Cardiology,DEPT_006
+PROV_0202,2139744790,Dr. Robert Wilson,Oncology,DEPT_004
+PROV_0203,4202607993,Dr. Jessica Anderson,Neurology,DEPT_017
+PROV_0204,3549776132,Dr. Joseph Taylor,Internal Medicine,DEPT_020
+PROV_0205,9776185998,Dr. Maria Sharma,Oncology,DEPT_010
+PROV_0206,5140460939,Dr. Mary Thomas,Pediatrics,DEPT_014
+PROV_0207,3946766309,Dr. Jessica Anderson,Emergency Medicine,DEPT_003
+PROV_0208,1637088959,Dr. Robert Rodriguez,Oncology,DEPT_023
+PROV_0209,6691628146,Dr. Karen Taylor,Orthopedics,DEPT_015
+PROV_0210,2847692041,Dr. Maria Brown,Oncology,DEPT_024
+PROV_0211,4717261214,Dr. Susan Anderson,Internal Medicine,DEPT_014
+PROV_0212,7242730249,Dr. Susan Brown,Neurology,DEPT_014
+PROV_0213,6389710636,Dr. Robert Sharma,General Surgery,DEPT_003
+PROV_0214,1366637148,Dr. Susan Brown,Neurology,DEPT_005
+PROV_0215,3389594115,Dr. Charles Moore,Oncology,DEPT_011
+PROV_0216,3877685081,Dr. Susan Lopez,Pediatrics,DEPT_024
+PROV_0217,6636925105,Dr. Patricia Jackson,Oncology,DEPT_007
+PROV_0218,3070987704,Dr. Patricia Lopez,Oncology,DEPT_012
+PROV_0219,3391179068,Dr. Karen Sharma,Orthopedics,DEPT_001
+PROV_0220,6069848439,Dr. Amit Martinez,Neurology,DEPT_012
+PROV_0221,1026224160,Dr. Robert Jackson,Pediatrics,DEPT_003
+PROV_0222,1131671246,Dr. Ananya Taylor,Internal Medicine,DEPT_013
+PROV_0223,7098134112,Dr. David Garcia,Neurology,DEPT_010
+PROV_0224,8394198376,Dr. Carlos Jackson,Emergency Medicine,DEPT_002
+PROV_0225,1668210614,Dr. Carlos Mehta,Cardiology,DEPT_022
+PROV_0226,5645357285,Dr. Joseph Sharma,Pediatrics,DEPT_016
+PROV_0227,7902338893,Dr. Susan Rodriguez,Internal Medicine,DEPT_025
+PROV_0228,3200510647,Dr. Barbara Wilson,Emergency Medicine,DEPT_010
+PROV_0229,7842459488,Dr. Thomas Sharma,Orthopedics,DEPT_002
+PROV_0230,6242086783,Dr. Karen Johnson,Cardiology,DEPT_007
+PROV_0231,6392415228,Dr. David Brown,Cardiology,DEPT_016
+PROV_0232,8503368512,Dr. Jennifer Jones,Pediatrics,DEPT_018
+PROV_0233,4022245086,Dr. Thomas Moore,Neurology,DEPT_003
+PROV_0234,4187043237,Dr. Susan Smith,General Surgery,DEPT_003
+PROV_0235,8997701619,Dr. Charles Wilson,Pediatrics,DEPT_023
+PROV_0236,8044354825,Dr. Elizabeth Brown,Pediatrics,DEPT_001
+PROV_0237,9444763362,Dr. Jennifer Mehta,General Surgery,DEPT_023
+PROV_0238,9245348297,Dr. John Wilson,Emergency Medicine,DEPT_008
+PROV_0239,5632753983,Dr. Elizabeth Hernandez,Internal Medicine,DEPT_011
+PROV_0240,4346285771,Dr. John Taylor,Emergency Medicine,DEPT_017
+PROV_0241,3190227431,Dr. Carlos Lopez,Neurology,DEPT_024
+PROV_0242,1634323009,Dr. Patricia Jones,Orthopedics,DEPT_007
+PROV_0243,1323639855,Dr. Carlos Patel,General Surgery,DEPT_015
+PROV_0244,7977267911,Dr. Rahul Hernandez,ICU Critical Care,DEPT_015
+PROV_0245,5588254555,Dr. Joseph Patel,Orthopedics,DEPT_009
+PROV_0246,3540128512,Dr. Barbara Taylor,Emergency Medicine,DEPT_010
+PROV_0247,7278136169,Dr. Mary Johnson,Neurology,DEPT_010
+PROV_0248,9919491730,Dr. John Mehta,Oncology,DEPT_013
+PROV_0249,4847761430,Dr. Joseph Jackson,Internal Medicine,DEPT_011
+PROV_0250,7893447569,Dr. Thomas Jones,Cardiology,DEPT_015
+PROV_0251,4067961943,Dr. Thomas Patel,ICU Critical Care,DEPT_002
+PROV_0252,5976777081,Dr. Barbara Martinez,Pediatrics,DEPT_014
+PROV_0253,8621268224,Dr. Priya Mehta,Cardiology,DEPT_021
+PROV_0254,8075122626,Dr. John Hernandez,Emergency Medicine,DEPT_018
+PROV_0255,8208584394,Dr. Elizabeth Rodriguez,ICU Critical Care,DEPT_011
+PROV_0256,9939982945,Dr. Priya Jones,Neurology,DEPT_010
+PROV_0257,2683446724,Dr. Karen Williams,Orthopedics,DEPT_018
+PROV_0258,8695129534,Dr. Robert Sharma,Oncology,DEPT_003
+PROV_0259,2554039848,Dr. Barbara Martinez,ICU Critical Care,DEPT_007
+PROV_0260,8585583166,Dr. Michael Davis,ICU Critical Care,DEPT_005
+PROV_0261,5626388820,Dr. Maria Brown,Oncology,DEPT_025
+PROV_0262,3261436148,Dr. Priya Hernandez,ICU Critical Care,DEPT_020
+PROV_0263,2617999521,Dr. Jennifer Garcia,ICU Critical Care,DEPT_024
+PROV_0264,2879792991,Dr. Susan Lopez,Internal Medicine,DEPT_015
+PROV_0265,7917454662,Dr. Carlos Anderson,Internal Medicine,DEPT_018
+PROV_0266,6322188162,Dr. Maria Thomas,Internal Medicine,DEPT_012
+PROV_0267,7187318744,Dr. Carlos Martinez,Pediatrics,DEPT_017
+PROV_0268,7560389844,Dr. Jennifer Miller,ICU Critical Care,DEPT_009
+PROV_0269,9814045133,Dr. Jessica Lopez,Oncology,DEPT_004
+PROV_0270,5830454240,Dr. John Garcia,Orthopedics,DEPT_015
+PROV_0271,2878930355,Dr. Linda Anderson,Neurology,DEPT_001
+PROV_0272,2781968664,Dr. Richard Taylor,Neurology,DEPT_008
+PROV_0273,5645459980,Dr. Linda Smith,Neurology,DEPT_004
+PROV_0274,8086527181,Dr. Maria Jones,ICU Critical Care,DEPT_002
+PROV_0275,8858766173,Dr. Amit Jones,General Surgery,DEPT_015
+PROV_0276,3642900640,Dr. John Smith,Orthopedics,DEPT_007
+PROV_0277,4586139213,Dr. Sarah Mehta,Oncology,DEPT_014
+PROV_0278,2237386857,Dr. Elizabeth Brown,Cardiology,DEPT_008
+PROV_0279,2963288053,Dr. Patricia Thomas,Oncology,DEPT_001
+PROV_0280,3469810046,Dr. Amit Jones,Orthopedics,DEPT_014
+PROV_0281,9596653373,Dr. Barbara Davis,Pediatrics,DEPT_006
+PROV_0282,9957643727,Dr. Barbara Williams,Oncology,DEPT_018
+PROV_0283,3380064537,Dr. Richard Thomas,Cardiology,DEPT_021
+PROV_0284,6898288854,Dr. Ananya Smith,Neurology,DEPT_003
+PROV_0285,2480915452,Dr. Ananya Sharma,Emergency Medicine,DEPT_025
+PROV_0286,8544878538,Dr. Robert Johnson,Neurology,DEPT_018
+PROV_0287,3760786161,Dr. Carlos Sharma,General Surgery,DEPT_023
+PROV_0288,1579187439,Dr. Amit Anderson,Cardiology,DEPT_010
+PROV_0289,1865826728,Dr. Maria Miller,Cardiology,DEPT_011
+PROV_0290,9303765140,Dr. Thomas Gonzalez,Oncology,DEPT_016
+PROV_0291,2087974350,Dr. Carlos Patel,Internal Medicine,DEPT_010
+PROV_0292,4353689019,Dr. Rahul Hernandez,Orthopedics,DEPT_004
+PROV_0293,8728116828,Dr. Susan Gonzalez,General Surgery,DEPT_013
+PROV_0294,6097341120,Dr. Amit Thomas,Neurology,DEPT_017
+PROV_0295,9944748312,Dr. Susan Williams,Pediatrics,DEPT_020
+PROV_0296,6556684476,Dr. Patricia Williams,Neurology,DEPT_022
+PROV_0297,6564731230,Dr. Joseph Mehta,Pediatrics,DEPT_006
+PROV_0298,8257484586,Dr. Barbara Anderson,Cardiology,DEPT_024
+PROV_0299,9581991473,Dr. William Patel,Cardiology,DEPT_003
+PROV_0300,7039626948,Dr. Thomas Sharma,ICU Critical Care,DEPT_001

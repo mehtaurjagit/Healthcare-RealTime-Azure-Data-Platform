@@ -1,0 +1,11 @@
+{
+  "name": "ls_sqldb_controldb",
+  "type": "Microsoft.DataFactory/factories/linkedservices",
+  "properties": {
+    "annotations": [],
+    "type": "AzureSqlDatabase",
+    "typeProperties": {
+      "connectionString": "Integrated Security=False;Encrypt=True;TrustServerCertificate=False;Data Source=sql-apexcare-prod-eastus.database.windows.net;Initial Catalog=sqldb-apexcare-control;User ID=sqladmin"
+    }
+  }
+}
