@@ -13,7 +13,7 @@
 
 **ApexCare** is an end-to-end healthcare data engineering and analytics platform built on Microsoft Azure.
 
-The project demonstrates how batch healthcare data and real-time patient telemetry can be ingested, processed, governed, modeled, and served through a modern **Medallion Lakehouse Architecture (Bronze → Silver → Gold)**.
+The project demonstrates how batch healthcare data and real-time patient telemetry can be ingested, processed, governed, monitored, modeled, and served through a modern **Medallion Lakehouse Architecture (Bronze → Silver → Gold)**.
 
 The platform combines:
 
@@ -21,7 +21,9 @@ The platform combines:
 - Real-time bedside telemetry using **Azure Event Hubs (Kafka protocol)**
 - Streaming and batch transformations using **Azure Databricks & PySpark**
 - ACID-compliant storage and SCD Type 2 processing using **Delta Lake**
-- Metadata and pipeline audit control using **Azure SQL Database**
+- Metadata-driven pipeline control using **Azure SQL Database**
+- Operational pipeline logging and Data Quality auditing
+- Invalid-record quarantine handling
 - Secret management using **Azure Key Vault**
 - Data governance using **Databricks Unity Catalog**
 - Analytical serving using **Azure Synapse Serverless SQL**
@@ -86,10 +88,10 @@ The project uses **synthetically generated healthcare data** and is designed as 
                        Analytics
 ```
 
-Supporting the pipeline:
+Supporting services:
 
 ```text
-Azure SQL Database  → Metadata Control + Audit Tables
+Azure SQL Database  → Metadata Control + Operational Audit + DQ Logs
 Azure Key Vault     → Secret Management
 Unity Catalog       → Data Governance
 GitHub Actions      → CI Validation + Deployment Simulation
@@ -101,12 +103,13 @@ GitHub Actions      → CI Validation + Deployment Simulation
 
 | Layer | Azure Service / Technology | Implementation |
 |---|---|---|
-| **Storage** | Azure Data Lake Storage Gen2 | Raw, Bronze, Silver, Gold and streaming checkpoint storage |
-| **Control Plane** | Azure SQL Database (Serverless) | Metadata-driven ingestion configuration and audit tables |
+| **Storage** | Azure Data Lake Storage Gen2 | Raw, Bronze, Silver, Gold, quarantine and streaming checkpoint storage |
+| **Control Plane & Observability** | Azure SQL Database (Serverless) | Metadata configuration, pipeline execution logging, data-quality metrics and watermark control |
 | **Batch Ingestion** | Azure Data Factory | Parameterized metadata-driven ingestion pipeline |
 | **Streaming Ingestion** | Azure Event Hubs | Kafka-compatible real-time bedside telemetry ingestion |
 | **Processing** | Azure Databricks | PySpark batch and Structured Streaming workloads |
 | **Lakehouse Storage** | Delta Lake | Bronze/Silver/Gold architecture, ACID transactions and MERGE |
+| **Data Quality** | PySpark + Azure SQL | Healthcare DQ rules, quarantine handling and audit metrics |
 | **Data Modeling** | PySpark / Delta | SCD Type 2 and dimensional/star-schema transformations |
 | **Governance** | Databricks Unity Catalog | Catalog/schema governance and controlled data access |
 | **Security** | Azure Key Vault | Centralized secret management |
@@ -132,9 +135,19 @@ ADF uses configuration stored in:
 meta.IngestionControl
 ```
 
-to determine source systems, entities, file formats, source paths, target locations, ingestion strategies, and watermark configuration.
+to determine:
 
-The repository contains the actual ADF artifacts used by the project, including:
+- Source system
+- Entity
+- File format
+- Source folder
+- Bronze target location
+- Silver target
+- Ingestion strategy
+- Watermark configuration
+- Active/inactive processing state
+
+The repository contains the actual ADF artifacts used by the project:
 
 ```text
 adf/
@@ -211,7 +224,7 @@ Responsibilities include:
 
 ## 🥈 Silver Layer
 
-The Silver layer performs data cleansing, standardization and business-rule processing.
+The Silver layer performs data cleansing, standardization, validation and business-rule processing.
 
 Implemented transformations include:
 
@@ -219,6 +232,7 @@ Implemented transformations include:
 - Timestamp validation
 - Duplicate handling
 - Healthcare data-quality rules
+- Invalid-record quarantine
 - Encounter transformations
 - Length-of-stay calculation
 - Patient dimension processing
@@ -275,9 +289,9 @@ The Gold layer is persisted in ADLS Gen2 and exposed to downstream analytics thr
 
 ---
 
-# 🗄️ Metadata Control & Auditing
+# 🗄️ Metadata-Driven Control Plane
 
-Azure SQL Database provides the pipeline control plane.
+Azure SQL Database provides the metadata-driven pipeline control plane.
 
 ## Metadata Configuration
 
@@ -299,14 +313,7 @@ BillingClaims
 PatientVitals
 ```
 
-## Audit Tables
-
-```text
-audit.PipelineExecutionLog
-audit.DataQualityLog
-```
-
-provide structures for pipeline execution and data-quality auditing.
+The metadata framework allows ingestion behavior to be controlled through configuration rather than hardcoding individual entities into the orchestration pipeline.
 
 The control database also includes:
 
@@ -315,6 +322,238 @@ meta.usp_UpdateWatermark
 ```
 
 for updating ingestion watermark state.
+
+---
+
+# 📈 Operational Logging & Data Quality
+
+ApexCare implements lightweight operational observability across both the **ADF ingestion layer** and **Databricks Silver processing layer**.
+
+Azure SQL provides two centralized audit structures:
+
+```text
+audit.PipelineExecutionLog
+audit.DataQualityLog
+```
+
+---
+
+## ADF Pipeline Execution Logging
+
+The ADF pipeline:
+
+```text
+PL_Ingest_Source_To_Bronze
+```
+
+contains operational audit hooks that record ingestion execution events into:
+
+```text
+audit.PipelineExecutionLog
+```
+
+### Pipeline Start Logging
+
+The pipeline logs the beginning of an ingestion execution with:
+
+```text
+Status = STARTED
+Layer  = BRONZE
+```
+
+along with the pipeline run identifier and execution timestamp.
+
+### Entity Success Logging
+
+After successful Raw → Bronze ingestion, entity-level execution information is captured including:
+
+```text
+Status
+PipelineName
+RunID
+SourceEntity
+Layer
+RecordsIngested
+ExecutionStartTime
+ExecutionEndTime
+```
+
+Successful copy operations are recorded with:
+
+```text
+Status = SUCCESS
+```
+
+### Entity Failure Logging
+
+Failed ingestion activities are captured with:
+
+```text
+Status = FAILED
+```
+
+along with the corresponding error message.
+
+This provides operational visibility into individual metadata-driven ingestion executions.
+
+---
+
+## Databricks Healthcare Data Quality Rules
+
+The Silver encounter transformation performs healthcare-specific Data Quality validation before downstream processing.
+
+Three primary validation rules are implemented:
+
+### Rule 1 — Required Encounter Keys
+
+```text
+RULE_01_NOT_NULL_KEYS
+```
+
+Validation:
+
+```text
+EncounterID IS NOT NULL
+AND
+PatientID IS NOT NULL
+```
+
+This prevents encounters without core identifiers from entering trusted downstream datasets.
+
+### Rule 2 — Valid Length of Stay
+
+```text
+RULE_02_VALID_LENGTH_OF_STAY
+```
+
+Validation:
+
+```text
+LengthOfStayHours >= 0
+AND
+LengthOfStayHours <= 8760
+```
+
+This detects invalid or unrealistic encounter-duration values.
+
+### Rule 3 — Valid Billed Amount
+
+```text
+RULE_03_VALID_BILLED_AMOUNT
+```
+
+Validation:
+
+```text
+TotalBilledAmount >= 0
+```
+
+This prevents negative billed amounts from passing the financial quality layer.
+
+---
+
+## Invalid Record Quarantine
+
+Records failing the configured Data Quality rules are separated from valid records.
+
+The processing pattern follows:
+
+```text
+Silver Transformation
+        │
+        ▼
+Healthcare DQ Rules
+        │
+        ├──────── Valid Records ────────► Trusted Silver Processing
+        │
+        └──────── Invalid Records ──────► Silver Quarantine
+```
+
+Quarantined records are preserved for investigation rather than silently discarded.
+
+---
+
+## Data Quality Audit Logging
+
+Databricks writes Data Quality rule metrics into:
+
+```text
+audit.DataQualityLog
+```
+
+Logged information includes:
+
+```text
+ExecutionID
+TableName
+RuleName
+RuleType
+TotalRecordsChecked
+FailedRecordCount
+QuarantineLocation
+LogTimestamp
+```
+
+This allows individual healthcare Data Quality rules to be monitored over time.
+
+The implemented rule categories include:
+
+```text
+NOT_NULL
+BUSINESS_RULE
+RANGE_CHECK
+```
+
+---
+
+## Cross-Service Operational Audit
+
+Databricks also writes execution-level information into:
+
+```text
+audit.PipelineExecutionLog
+```
+
+creating a shared operational audit layer across ADF and Databricks.
+
+```text
+                  ┌──────────────────────────┐
+                  │ Azure Data Factory       │
+                  │ Batch Ingestion          │
+                  └────────────┬─────────────┘
+                               │
+                    STARTED / SUCCESS / FAILED
+                               │
+                               ▼
+                  audit.PipelineExecutionLog
+                               ▲
+                               │
+                      Execution Metrics
+                               │
+                  ┌────────────┴─────────────┐
+                  │ Azure Databricks         │
+                  │ Silver Processing        │
+                  └────────────┬─────────────┘
+                               │
+                         DQ Evaluation
+                               │
+                  ┌────────────┴─────────────┐
+                  │                          │
+                  ▼                          ▼
+          Invalid Records            audit.DataQualityLog
+          Silver Quarantine          Rule-Level Metrics
+```
+
+This provides visibility into:
+
+- Pipeline execution state
+- Entity-level ingestion outcomes
+- Records processed
+- Failed pipeline activities
+- Error messages
+- Records quarantined
+- Data Quality rule failures
+- Quality pass/failure metrics
 
 ---
 
@@ -334,6 +573,8 @@ Storage credentials / fallback access
 
 No production secrets or plaintext passwords are intentionally stored in the repository.
 
+---
+
 ## Databricks Secret Management
 
 Databricks workloads retrieve sensitive values at runtime using secret scopes rather than hardcoded credentials.
@@ -343,6 +584,10 @@ Example pattern:
 ```python
 dbutils.secrets.get(scope="<secret-scope>", key="<secret-name>")
 ```
+
+This allows notebooks to consume credentials without embedding secret values directly in source code.
+
+---
 
 ## Unity Catalog
 
@@ -370,7 +615,7 @@ Endpoint: Built-in
 
 Serverless SQL views query Gold-layer Parquet data stored in ADLS Gen2.
 
-### Base Analytical Views
+## Base Analytical Views
 
 ```text
 gold.vw_Dim_Patient
@@ -380,7 +625,7 @@ gold.vw_Fact_PatientEncounters
 gold.vw_Fact_VitalsTelemetry
 ```
 
-### Executive Analytical Views
+## Executive Analytical Views
 
 ```text
 gold.vw_exec_encounter_summary
@@ -408,7 +653,7 @@ synapse/DDL_Dedicated_SQL_Pool_Optional.sql
 
 The final analytics layer contains **three interactive Power BI report pages** covering executive, clinical and financial perspectives.
 
-## 1. Executive Healthcare Overview
+## 1️⃣ Executive Healthcare Overview
 
 Provides operational and hospital-performance analytics including:
 
@@ -424,7 +669,7 @@ Provides operational and hospital-performance analytics including:
 
 ---
 
-## 2. Clinical Vitals & Patient Risk Analytics
+## 2️⃣ Clinical Vitals & Patient Risk Analytics
 
 Analyzes bedside telemetry generated through the Event Hubs → Databricks streaming pipeline.
 
@@ -441,7 +686,7 @@ Includes:
 
 ---
 
-## 3. Financial & Payer Analytics
+## 3️⃣ Financial & Payer Analytics
 
 Provides financial analytics across insurance payers, encounter types and geographic regions.
 
@@ -468,7 +713,7 @@ Additional dashboard documentation is available in:
 powerbi/README.md
 ```
 
-> The dashboard screenshots provide browser-friendly portfolio previews. The PBIX file is included for local exploration in Power BI Desktop.
+> Dashboard screenshots provide browser-friendly portfolio previews. The PBIX file is included for local exploration in Power BI Desktop.
 
 ---
 
@@ -607,10 +852,14 @@ ApexCare demonstrates practical implementation of:
 - Delta Lake Medallion Architecture
 - SCD Type 2 dimensional processing
 - Star-schema data modeling
-- Data-quality processing
+- Healthcare-specific Data Quality validation
+- Invalid-record quarantine handling
+- Operational pipeline logging
+- Cross-service audit logging across ADF and Databricks
+- Rule-level Data Quality metrics
 - Streaming checkpoint management
 - SQL-based metadata control
-- Pipeline auditing structures
+- Watermark management
 - Azure Key Vault secret management
 - Databricks secret scopes
 - Unity Catalog governance
@@ -619,6 +868,60 @@ ApexCare demonstrates practical implementation of:
 - Git-based source control
 - CI validation with GitHub Actions
 - Cost-conscious Azure architecture
+
+---
+
+# 🎯 End-to-End Engineering Flow
+
+```text
+Synthetic Healthcare Sources
+          │
+          ├──────── Batch CSV / JSON
+          │               │
+          │               ▼
+          │        Azure Data Factory
+          │               │
+          │        Metadata Control
+          │               │
+          │               ▼
+          │           Bronze Delta
+          │
+          └──────── Real-Time Vitals
+                          │
+                          ▼
+                    Event Hubs Kafka
+                          │
+                          ▼
+                 Databricks Streaming
+                          │
+                          ▼
+                     Bronze Delta
+                          │
+                          ▼
+                     Silver Delta
+                Cleaning / DQ / SCD2
+                          │
+                 ┌────────┴────────┐
+                 │                 │
+                 ▼                 ▼
+           Valid Records       Quarantine
+                 │
+                 ▼
+              Gold Delta
+              Star Schema
+                 │
+                 ▼
+          Synapse Serverless
+                 │
+                 ▼
+              Power BI
+
+Operational Observability:
+ADF + Databricks
+       │
+       ├──► audit.PipelineExecutionLog
+       └──► audit.DataQualityLog
+```
 
 ---
 
@@ -633,9 +936,15 @@ Source Systems
       ↓
 Batch + Streaming Ingestion
       ↓
+Metadata-Driven Orchestration
+      ↓
 Lakehouse Processing
       ↓
-Data Quality & Historical Tracking
+Data Quality + Quarantine
+      ↓
+Operational Logging
+      ↓
+Historical Tracking
       ↓
 Dimensional Modeling
       ↓
