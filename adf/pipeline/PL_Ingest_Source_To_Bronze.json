@@ -1,90 +1,258 @@
 {
-  "name": "PL_Ingest_Source_To_Bronze",
-  "properties": {
-    "description": "Metadata-driven dynamic batch copy pipeline reading active ingestion control records from Azure SQL and copying raw files into Bronze storage layer.",
-    "activities": [
-      {
-        "name": "LKP_Get_Active_Control_Metadata",
-        "description": "Reads active batch ingestion entities from meta.IngestionControl",
-        "type": "Lookup",
-        "dependsOn": [],
-        "policy": {
-          "timeout": "0.00:10:00",
-          "retry": 1,
-          "retryIntervalInSeconds": 30
-        },
-        "typeProperties": {
-          "source": {
-            "type": "AzureSqlSource",
-            "sqlReaderQuery": "SELECT SourceID, SourceSystem, EntityName, SourceFormat, SourceFolderPath, TargetBronzePath, IngestionType, WatermarkColumn, WatermarkValue FROM meta.IngestionControl WHERE IsActive = 1 AND IngestionType != 'STREAMING';"
-          },
-          "dataset": {
-            "referenceName": "ds_sqldb_lookup",
-            "type": "DatasetReference"
-          },
-          "firstRowOnly": false
-        }
-      },
-      {
-        "name": "FE_Process_Each_Entity",
-        "description": "Iterates through each active ingestion control entity",
-        "type": "ForEach",
-        "dependsOn": [
-          {
-            "activity": "LKP_Get_Active_Control_Metadata",
-            "dependencyConditions": ["Succeeded"]
-          }
-        ],
-        "typeProperties": {
-          "isSequential": false,
-          "batchCount": 4,
-          "items": {
-            "value": "@activity('LKP_Get_Active_Control_Metadata').output.value",
-            "type": "Expression"
-          },
-          "activities": [
+    "name": "PL_Ingest_Source_To_Bronze",
+    "properties": {
+        "activities": [
             {
-              "name": "COPY_Raw_To_Bronze",
-              "type": "Copy",
-              "dependsOn": [],
-              "typeProperties": {
-                "source": {
-                  "type": "BinarySource",
-                  "storeSettings": {
-                    "type": "AzureBlobFSReadSettings",
-                    "recursive": true,
-                    "wildcardFileName": "*"
-                  }
+                "name": "LKP_Get_Active_Control_Metadata",
+                "type": "Lookup",
+                "dependsOn": [
+                    {
+                        "activity": "SCR_Log_Pipeline_Start",
+                        "dependencyConditions": [
+                            "Succeeded"
+                        ]
+                    }
+                ],
+                "policy": {
+                    "timeout": "0.12:00:00",
+                    "retry": 0,
+                    "retryIntervalInSeconds": 30,
+                    "secureOutput": false,
+                    "secureInput": false
                 },
-                "sink": {
-                  "type": "BinarySink",
-                  "storeSettings": {
-                    "type": "AzureBlobFSSinkWriteSettings"
-                  }
+                "userProperties": [],
+                "typeProperties": {
+                    "source": {
+                        "type": "AzureSqlSource",
+                        "sqlReaderQuery": "SELECT SourceID, SourceSystem, EntityName, SourceFolderPath, TargetBronzePath \nFROM meta.IngestionControl \nWHERE IsActive = 1 AND IngestionType != 'STREAMING';",
+                        "queryTimeout": "02:00:00",
+                        "partitionOption": "None"
+                    },
+                    "dataset": {
+                        "referenceName": "ds_sqldb_lookup",
+                        "type": "DatasetReference"
+                    },
+                    "firstRowOnly": false
                 }
-              },
-              "inputs": [
-                {
-                  "referenceName": "ds_adls_raw_dynamic",
-                  "type": "DatasetReference",
-                  "parameters": {
-                    "FolderPath": "@item().SourceFolderPath"
-                  }
+            },
+            {
+                "name": "FE_Process_Each_Entity",
+                "type": "ForEach",
+                "dependsOn": [
+                    {
+                        "activity": "LKP_Get_Active_Control_Metadata",
+                        "dependencyConditions": [
+                            "Succeeded"
+                        ]
+                    }
+                ],
+                "userProperties": [],
+                "typeProperties": {
+                    "items": {
+                        "value": "@activity('LKP_Get_Active_Control_Metadata').output.value",
+                        "type": "Expression"
+                    },
+                    "activities": [
+                        {
+                            "name": "COPY_Raw_To_Bronze",
+                            "type": "Copy",
+                            "dependsOn": [],
+                            "policy": {
+                                "timeout": "0.12:00:00",
+                                "retry": 0,
+                                "retryIntervalInSeconds": 30,
+                                "secureOutput": false,
+                                "secureInput": false
+                            },
+                            "userProperties": [],
+                            "typeProperties": {
+                                "source": {
+                                    "type": "BinarySource",
+                                    "storeSettings": {
+                                        "type": "AzureBlobFSReadSettings",
+                                        "recursive": true,
+                                        "deleteFilesAfterCompletion": false
+                                    },
+                                    "formatSettings": {
+                                        "type": "BinaryReadSettings"
+                                    }
+                                },
+                                "sink": {
+                                    "type": "BinarySink",
+                                    "storeSettings": {
+                                        "type": "AzureBlobFSWriteSettings"
+                                    }
+                                },
+                                "enableStaging": false
+                            },
+                            "inputs": [
+                                {
+                                    "referenceName": "ds_adls_raw_dynamic",
+                                    "type": "DatasetReference",
+                                    "parameters": {
+                                        "FolderPath": {
+                                            "value": "@item().SourceFolderPath",
+                                            "type": "Expression"
+                                        }
+                                    }
+                                }
+                            ],
+                            "outputs": [
+                                {
+                                    "referenceName": "ds_adls_bronze_dynamic",
+                                    "type": "DatasetReference",
+                                    "parameters": {
+                                        "FolderPath": {
+                                            "value": "@item().TargetBronzePath",
+                                            "type": "Expression"
+                                        }
+                                    }
+                                }
+                            ]
+                        },
+                        {
+                            "name": "SCR_Log_Entity_Success",
+                            "type": "Script",
+                            "dependsOn": [
+                                {
+                                    "activity": "COPY_Raw_To_Bronze",
+                                    "dependencyConditions": [
+                                        "Succeeded"
+                                    ]
+                                }
+                            ],
+                            "policy": {
+                                "timeout": "0.12:00:00",
+                                "retry": 0,
+                                "retryIntervalInSeconds": 30,
+                                "secureOutput": false,
+                                "secureInput": false
+                            },
+                            "userProperties": [],
+                            "linkedServiceName": {
+                                "referenceName": "ls_sqldb_controldb",
+                                "type": "LinkedServiceReference"
+                            },
+                            "typeProperties": {
+                                "scripts": [
+                                    {
+                                        "type": "NonQuery",
+                                        "text": {
+                                            "value": "INSERT INTO audit.PipelineExecutionLog (\n    ExecutionID, PipelineName, RunID, SourceEntity, Layer, Status,\n    RecordsIngested, RecordsQuarantined, ExecutionStartTime, ExecutionEndTime\n)\nVALUES (\n    NEWID(),\n    'PL_Ingest_Source_To_Bronze',\n    '@{pipeline().RunId}',\n    '@{item().EntityName}',\n    'BRONZE',\n    'SUCCESS',\n    @{activity('COPY_Raw_To_Bronze').output.filesWritten},\n    0,\n    GETUTCDATE(),\n    GETUTCDATE()\n);",
+                                            "type": "Expression"
+                                        }
+                                    }
+                                ],
+                                "scriptBlockExecutionTimeout": "02:00:00"
+                            }
+                        },
+                        {
+                            "name": "SCR_Log_Entity_Failure",
+                            "type": "Script",
+                            "dependsOn": [
+                                {
+                                    "activity": "COPY_Raw_To_Bronze",
+                                    "dependencyConditions": [
+                                        "Failed"
+                                    ]
+                                }
+                            ],
+                            "policy": {
+                                "timeout": "0.12:00:00",
+                                "retry": 0,
+                                "retryIntervalInSeconds": 30,
+                                "secureOutput": false,
+                                "secureInput": false
+                            },
+                            "userProperties": [],
+                            "linkedServiceName": {
+                                "referenceName": "ls_sqldb_controldb",
+                                "type": "LinkedServiceReference"
+                            },
+                            "typeProperties": {
+                                "scripts": [
+                                    {
+                                        "type": "NonQuery",
+                                        "text": {
+                                            "value": "INSERT INTO audit.PipelineExecutionLog (\n    ExecutionID, PipelineName, RunID, SourceEntity, Layer, Status,\n    RecordsIngested, RecordsQuarantined, ExecutionStartTime, ExecutionEndTime, ErrorMessage\n)\nVALUES (\n    NEWID(),\n    'PL_Ingest_Source_To_Bronze',\n    '@{pipeline().RunId}',\n    '@{item().EntityName}',\n    'BRONZE',\n    'FAILED',\n    0, 0,\n    GETUTCDATE(),\n    GETUTCDATE(),\n    '@{replace(activity('COPY_Raw_To_Bronze').error.message, '''', '''''')}'\n);",
+                                            "type": "Expression"
+                                        }
+                                    }
+                                ],
+                                "scriptBlockExecutionTimeout": "02:00:00"
+                            }
+                        }
+                    ]
                 }
-              ],
-              "outputs": [
-                {
-                  "referenceName": "ds_adls_bronze_dynamic",
-                  "type": "DatasetReference",
-                  "parameters": {
-                    "FolderPath": "@item().TargetBronzePath"
-                  }
+            },
+            {
+                "name": "SCR_Log_Pipeline_Start",
+                "type": "Script",
+                "dependsOn": [],
+                "policy": {
+                    "timeout": "0.12:00:00",
+                    "retry": 0,
+                    "retryIntervalInSeconds": 30,
+                    "secureOutput": false,
+                    "secureInput": false
+                },
+                "userProperties": [],
+                "linkedServiceName": {
+                    "referenceName": "ls_sqldb_controldb",
+                    "type": "LinkedServiceReference"
+                },
+                "typeProperties": {
+                    "scripts": [
+                        {
+                            "type": "NonQuery",
+                            "text": {
+                                "value": "INSERT INTO audit.PipelineExecutionLog (\n    ExecutionID, PipelineName, RunID, SourceEntity, Layer, Status,\n    RecordsIngested, RecordsQuarantined, ExecutionStartTime\n)\nVALUES (\n    NEWID(),\n    'PL_Ingest_Source_To_Bronze',\n    '@{pipeline().RunId}',\n    'ALL_BATCH_ENTITIES',\n    'BRONZE',\n    'STARTED',\n    0, 0,\n    GETUTCDATE()\n);",
+                                "type": "Expression"
+                            }
+                        }
+                    ],
+                    "scriptBlockExecutionTimeout": "02:00:00"
                 }
-              ]
+            },
+            {
+                "name": "SCR_Log_Pipeline_Complete",
+                "type": "Script",
+                "dependsOn": [
+                    {
+                        "activity": "FE_Process_Each_Entity",
+                        "dependencyConditions": [
+                            "Succeeded"
+                        ]
+                    }
+                ],
+                "policy": {
+                    "timeout": "0.12:00:00",
+                    "retry": 0,
+                    "retryIntervalInSeconds": 30,
+                    "secureOutput": false,
+                    "secureInput": false
+                },
+                "userProperties": [],
+                "linkedServiceName": {
+                    "referenceName": "ls_sqldb_controldb",
+                    "type": "LinkedServiceReference"
+                },
+                "typeProperties": {
+                    "scripts": [
+                        {
+                            "type": "NonQuery",
+                            "text": {
+                                "value": "UPDATE audit.PipelineExecutionLog\nSET\n    Status = 'SUCCESS',\n    ExecutionEndTime = GETUTCDATE()\nWHERE\n    RunID = '@{pipeline().RunId}'\n    AND SourceEntity = 'ALL_BATCH_ENTITIES'\n    AND Status = 'STARTED';",
+                                "type": "Expression"
+                            }
+                        }
+                    ],
+                    "scriptBlockExecutionTimeout": "02:00:00"
+                }
             }
-          ]
-        }
-      }
-    ]
-  }
+        ],
+        "annotations": [],
+        "lastPublishTime": "2026-08-24T16:16:38Z"
+    },
+    "type": "Microsoft.DataFactory/factories/pipelines"
 }

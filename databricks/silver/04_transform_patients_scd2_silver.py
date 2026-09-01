@@ -1,23 +1,18 @@
 # Databricks notebook source
-# MAGIC %md
-# MAGIC # 🏥 ApexCare Real-Time Healthcare Platform
-# MAGIC ## Notebook 03: Silver Layer — Patients Slowly Changing Dimension (SCD) Type 2 Engine
-# MAGIC 
-# MAGIC **Business Purpose**: Tracks historical changes over time in patient addresses, phone numbers, and insurance coverage using **SCD Type 2**. Adds surrogate keys (`PatientSK`), `IsCurrent` status flags, `EffectiveStartDate`, and `EffectiveEndDate`.
-
 # COMMAND ----------
-
 # 1. PARAMETERS & STORAGE PATHS
 STORAGE_ACCOUNT = "stapexcareprodeastus"
 
-BRONZE_PATIENTS_PATH = f"abfss://bronze@{STORAGE_ACCOUNT}.dfs.core.windows.net/ehr/patients/"
+BRONZE_PATIENTS_PATH = f"abfss://bronze@{STORAGE_ACCOUNT}.dfs.core.windows.net/bronze/ehr/patients/Patients.csv"
 SILVER_PATIENTS_SCD2_PATH = f"abfss://silver@{STORAGE_ACCOUNT}.dfs.core.windows.net/dim_patient_scd2/"
 
-STORAGE_KEY = dbutils.widgets.get("storage_account_key") if "storage_account_key" in [w.name for w in dbutils.widgets.getExtra()] else "<YOUR_STORAGE_ACCOUNT_KEY>"
+STORAGE_KEY = "<YOUR_STORAGE_ACCOUNT_KEY>"
 spark.conf.set(f"fs.azure.account.key.{STORAGE_ACCOUNT}.dfs.core.windows.net", STORAGE_KEY)
+
 
 # COMMAND ----------
 
+# COMMAND ----------
 # 2. READ BRONZE PATIENTS DROP FILE
 from pyspark.sql.functions import col, md5, concat_ws, to_timestamp, lit, current_timestamp
 from delta.tables import DeltaTable
@@ -34,7 +29,8 @@ print(f"Loaded {raw_patients_df.count()} raw patient records from Bronze.")
 
 # COMMAND ----------
 
-# 3. CONSTRUCT STAGING SURROGATE KEYS & METADATA
+# COMMAND ----------
+# 3. CONSTRUCT SURROGATE KEYS & SCD2 METADATA COLUMNS
 staged_patients_df = (
     raw_patients_df
     .withColumn("UpdatedTimestamp", to_timestamp(col("UpdatedTimestamp"), "yyyy-MM-dd HH:mm:ss"))
@@ -47,7 +43,8 @@ staged_patients_df = (
 
 # COMMAND ----------
 
-# 4. INITIALIZE SILVER DELTA TABLE IF NOT EXISTS
+# COMMAND ----------
+# 4. INITIALIZE / MERGE INTO SILVER SCD2 DELTA TABLE
 if not DeltaTable.isDeltaTable(spark, SILVER_PATIENTS_SCD2_PATH):
     print("Initializing new Silver dim_patient_scd2 Delta table...")
     (
@@ -58,14 +55,11 @@ if not DeltaTable.isDeltaTable(spark, SILVER_PATIENTS_SCD2_PATH):
     )
     print("✅ Successfully initialized dim_patient_scd2 Delta table!")
 else:
-    # 5. EXECUTE DELTA MERGE FOR SCD TYPE 2
     print("Executing Delta MERGE for SCD Type 2 updates...")
     target_table = DeltaTable.forPath(spark, SILVER_PATIENTS_SCD2_PATH)
 
-    # Step A: Update existing current records where attributes changed (set IsCurrent = False, EffectiveEndDate = Source.EffectiveStartDate)
     merge_condition = "target.PatientID = source.PatientID AND target.IsCurrent = True"
 
-    # Merge stage 1: Upsert changed records
     (
         target_table.alias("target")
         .merge(
@@ -90,9 +84,17 @@ else:
 
 # COMMAND ----------
 
-# 6. VERIFY SILVER SCD TYPE 2 DIMENSION RECORD COUNTS
+# COMMAND ----------
+# 5. VERIFY SILVER SCD TYPE 2 DIMENSION RECORD COUNTS
 silver_df = spark.read.format("delta").load(SILVER_PATIENTS_SCD2_PATH)
 current_count = silver_df.filter(col("IsCurrent") == True).count()
 total_versions = silver_df.count()
 
 print(f"📊 Total Patient Versions: {total_versions} | Active Current Patients: {current_count}")
+
+# COMMAND ----------
+
+# MAGIC %sql
+# MAGIC SELECT PatientID, FirstName, LastName, City, PrimaryInsurancePayer, IsCurrent, EffectiveStartDate, EffectiveEndDate 
+# MAGIC FROM delta.`abfss://silver@stapexcareprodeastus.dfs.core.windows.net/dim_patient_scd2/`
+# MAGIC LIMIT 10;

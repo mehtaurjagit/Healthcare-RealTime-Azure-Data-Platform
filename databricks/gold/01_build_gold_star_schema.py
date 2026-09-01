@@ -1,12 +1,5 @@
 # Databricks notebook source
-# MAGIC %md
-# MAGIC # 🏥 ApexCare Real-Time Healthcare Platform
-# MAGIC ## Notebook 04: Gold Layer — Star Schema Dimensional Model Construction
-# MAGIC 
-# MAGIC **Business Purpose**: Reads clean Silver Delta tables (`dim_patient_scd2`, `fact_encounters`, `fact_vitals_telemetry`, `Providers`, `Departments`) and constructs a production **Star Schema** in `gold/` container for executive reporting in Synapse & Power BI.
-
 # COMMAND ----------
-
 # 1. PARAMETERS & STORAGE PATHS
 STORAGE_ACCOUNT = "stapexcareprodeastus"
 
@@ -18,11 +11,14 @@ BRONZE_VITALS_STREAMING_PATH = f"abfss://bronze@{STORAGE_ACCOUNT}.dfs.core.windo
 
 GOLD_PATH = f"abfss://gold@{STORAGE_ACCOUNT}.dfs.core.windows.net/"
 
-STORAGE_KEY = dbutils.widgets.get("storage_account_key") if "storage_account_key" in [w.name for w in dbutils.widgets.getExtra()] else "<YOUR_STORAGE_ACCOUNT_KEY>"
+STORAGE_KEY = "<YOUR_STORAGE_ACCOUNT_KEY>"
 spark.conf.set(f"fs.azure.account.key.{STORAGE_ACCOUNT}.dfs.core.windows.net", STORAGE_KEY)
+
+
 
 # COMMAND ----------
 
+# COMMAND ----------
 # 2. BUILD GOLD DIM_PATIENT (ACTIVE CURRENT RECORDS)
 from pyspark.sql.functions import col, md5, concat_ws, current_timestamp
 
@@ -43,6 +39,7 @@ print(f"✅ Created Gold Table: dim_patient ({gold_dim_patient.count()} active r
 
 # COMMAND ----------
 
+# COMMAND ----------
 # 3. BUILD GOLD DIM_PROVIDER & DIM_DEPARTMENT
 raw_providers_df = spark.read.option("header", "true").csv(BRONZE_PROVIDERS_PATH)
 gold_dim_provider = (
@@ -64,6 +61,7 @@ print("✅ Created Gold Tables: dim_provider & dim_department")
 
 # COMMAND ----------
 
+# COMMAND ----------
 # 4. BUILD GOLD FACT_PATIENT_ENCOUNTERS
 silver_encounters_df = spark.read.format("delta").load(SILVER_ENCOUNTERS_PATH)
 
@@ -93,6 +91,7 @@ print(f"✅ Created Gold Table: fact_patient_encounters ({gold_fact_encounters.c
 
 # COMMAND ----------
 
+# COMMAND ----------
 # 5. BUILD GOLD FACT_VITALS_TELEMETRY (REAL-TIME STREAMING FACT)
 streaming_vitals_df = spark.read.format("delta").load(BRONZE_VITALS_STREAMING_PATH)
 

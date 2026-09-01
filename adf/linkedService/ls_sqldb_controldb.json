@@ -1,11 +1,24 @@
 {
-  "name": "ls_sqldb_controldb",
-  "type": "Microsoft.DataFactory/factories/linkedservices",
-  "properties": {
-    "annotations": [],
-    "type": "AzureSqlDatabase",
-    "typeProperties": {
-      "connectionString": "Integrated Security=False;Encrypt=True;TrustServerCertificate=False;Data Source=sql-apexcare-prod-eastus.database.windows.net;Initial Catalog=sqldb-apexcare-control;User ID=sqladmin"
+    "name": "ls_sqldb_controldb",
+    "type": "Microsoft.DataFactory/factories/linkedservices",
+    "properties": {
+        "annotations": [],
+        "type": "AzureSqlDatabase",
+        "typeProperties": {
+            "server": "sql-apexcare-prod-eastus.database.windows.net",
+            "database": "sqldb-apexcare-control",
+            "encrypt": "mandatory",
+            "trustServerCertificate": false,
+            "authenticationType": "SQL",
+            "userName": "sqladmin",
+            "password": {
+                "type": "AzureKeyVaultSecret",
+                "store": {
+                    "referenceName": "ls_keyvault_apexcare",
+                    "type": "LinkedServiceReference"
+                },
+                "secretName": "sqldb-control-password"
+            }
+        }
     }
-  }
 }

@@ -1,46 +1,28 @@
 # Databricks notebook source
-# MAGIC %md
-# MAGIC # 🏥 ApexCare Real-Time Healthcare Platform
-# MAGIC ## Notebook 01: Real-Time Bedside ICU Telemetry Ingestion (Event Hubs Kafka → Bronze Delta)
-# MAGIC 
-# MAGIC **Business Purpose**: Consumes continuous streaming telemetry (Heart rate, Blood Pressure, SpO2, Emergency Alerts) from bedside ICU monitors via Azure Event Hubs (Kafka Protocol), enforces JSON schema contract, adds audit metadata, and writes to Bronze Delta Lake using Structured Streaming.
-
 # COMMAND ----------
+# 1. DEFINE STORAGE & EVENT HUBS PARAMETERS
+STORAGE_ACCOUNT = "stapexcareprodeastus"
+EVENT_HUBS_NAMESPACE = "evh-apexcare-prod-eastus"
+TOPIC_NAME = "vitals-telemetry-hub"
 
-# 1. DEFINE WIDGET PARAMETERS & STORAGE PATHS
-dbutils.widgets.text("storage_account_name", "stapexcareprodeastus")
-dbutils.widgets.text("event_hubs_namespace", "evh-apexcare-prod-eastus")
-dbutils.widgets.text("event_hub_topic", "vitals-telemetry-hub")
+# Paste your Keys below - .strip() will automatically clean any accidental quotes
+STORAGE_KEY = "<YOUR_STORAGE_ACCOUNT_KEY>".strip("'\" ")
+EVENT_HUBS_SAS_KEY = dbutils.secrets.get(
+    scope="dbsecrets-apexcare",
+    key="evh-vitals-connection-string")
 
-STORAGE_ACCOUNT = dbutils.widgets.get("storage_account_name")
-EVENT_HUBS_NAMESPACE = dbutils.widgets.get("event_hubs_namespace")
-TOPIC_NAME = dbutils.widgets.get("event_hub_topic")
-
-# Storage Container Target Paths (ABFSS protocol)
 BRONZE_TARGET_PATH = f"abfss://bronze@{STORAGE_ACCOUNT}.dfs.core.windows.net/telemetry/vitals_streaming/"
 CHECKPOINT_PATH = f"abfss://system-checkpoints@{STORAGE_ACCOUNT}.dfs.core.windows.net/checkpoints/vitals_streaming/"
 
-print(f"Target Bronze Path: {BRONZE_TARGET_PATH}")
-print(f"Checkpoint Path: {CHECKPOINT_PATH}")
+spark.conf.set(f"fs.azure.account.key.{STORAGE_ACCOUNT}.dfs.core.windows.net", STORAGE_KEY)
 
 # COMMAND ----------
 
-# 2. CONFIGURE STORAGE ACCOUNT ACCESS KEY SECURELY
-# (Note: In Phase 2 Enhancements, we replace raw key config with Key Vault Secret Scope dbsecrets-apexcare)
-STORAGE_KEY = dbutils.widgets.get("storage_account_key") if "storage_account_key" in [w.name for w in dbutils.widgets.getExtra()] else "<YOUR_STORAGE_ACCOUNT_KEY>"
-
-spark.conf.set(
-    f"fs.azure.account.key.{STORAGE_ACCOUNT}.dfs.core.windows.net",
-    STORAGE_KEY
-)
-
 # COMMAND ----------
-
-# 3. IMPORT REQUIRED PYSPARK LIBRARIES & DEFINE TELEMETRY JSON SCHEMA
-from pyspark.sql.functions import from_json, col, current_timestamp, lit, expr
+# 2. IMPORT LIBRARIES & DEFINE TELEMETRY JSON SCHEMA CONTRACT
+from pyspark.sql.functions import from_json, col, current_timestamp, lit
 from pyspark.sql.types import StructType, StructField, StringType, IntegerType, DoubleType, BooleanType, TimestampType
 
-# Schema contract for bedside ICU device telemetry events
 telemetry_schema = StructType([
     StructField("TelemetryID", StringType(), False),
     StructField("PatientID", StringType(), False),
@@ -55,17 +37,25 @@ telemetry_schema = StructType([
     StructField("EventTimestamp", StringType(), True)
 ])
 
+
+
 # COMMAND ----------
 
-# 4. CONFIGURE EVENT HUBS KAFKA CONNECTION PARAMETERS
-EVENT_HUBS_SAS_KEY = "<YOUR_EVENT_HUBS_PRIMARY_CONNECTION_STRING>"
+# COMMAND ----------
+# 3. CONFIGURE KAFKA STREAM READER FROM AZURE EVENT HUBS
 KAFKA_BROKER = f"{EVENT_HUBS_NAMESPACE}.servicebus.windows.net:9093"
 
-# SASL JAAS authentication string for Azure Event Hubs Kafka Surface
+# Escape characters safely before inserting secret into JAAS config
+eventhub_secret_escaped = (
+    EVENT_HUBS_SAS_KEY
+    .replace("\\", "\\\\")
+    .replace('"', '\\"')
+)
+
 sasl_jaas_config = (
-    f'org.apache.kafka.common.security.plain.PlainLoginModule required '
-    f'username="$ConnectionString" '
-    f'password="{EVENT_HUBS_SAS_KEY}";'
+    'kafkashaded.org.apache.kafka.common.security.plain.PlainLoginModule required '
+    'username="$ConnectionString" '
+    f'password="{eventhub_secret_escaped}";'
 )
 
 kafka_options = {
@@ -74,24 +64,18 @@ kafka_options = {
     "kafka.sasl.mechanism": "PLAIN",
     "kafka.security.protocol": "SASL_SSL",
     "kafka.sasl.jaas.config": sasl_jaas_config,
-    "startingOffsets": "latest",
+    "startingOffsets": "earliest",
     "failOnDataLoss": "false"
 }
 
-# COMMAND ----------
-
-# 5. READ STRUCTURED STREAM FROM EVENT HUBS KAFKA TOPIC
-kafka_stream_df = (
-    spark.readStream
-    .format("kafka")
-    .options(**kafka_options)
-    .load()
-)
+print("✅ Kafka options configured with kafkashaded module!")
 
 # COMMAND ----------
 
-# 6. PARSE JSON PAYLOAD & ADD AUDIT METADATA COLUMNS
-# Event Hubs payload is stored as binary in 'value' column
+# COMMAND ----------
+# 4. READ STRUCTURED STREAM & PARSE JSON PAYLOAD WITH AUDIT COLUMNS
+kafka_stream_df = spark.readStream.format("kafka").options(**kafka_options).load()
+
 parsed_stream_df = (
     kafka_stream_df
     .selectExpr("CAST(value AS STRING) as json_payload", "timestamp as kafka_enqueued_time", "partition", "offset")
@@ -107,9 +91,12 @@ parsed_stream_df = (
     .withColumn("_source_system", lit("BEDSIDE_ICU_EVENT_HUBS"))
 )
 
+
+
 # COMMAND ----------
 
-# 7. WRITE STRUCTURED STREAM TO BRONZE DELTA LAKE TABLE WITH CHECKPOINTING
+# COMMAND ----------
+# 5. WRITE STREAM TO BRONZE DELTA TABLE WITH CHECKPOINTING
 query = (
     parsed_stream_df.writeStream
     .format("delta")
@@ -120,4 +107,18 @@ query = (
     .start(BRONZE_TARGET_PATH)
 )
 
-print(f"🚀 Streaming query started! Status: {query.status}")
+print(f"🚀 Streaming query started successfully! Stream status: {query.status}")
+
+# COMMAND ----------
+
+import socket
+
+host = "evh-apexcare-prod-eastus.servicebus.windows.net"
+port = 9093
+
+try:
+    s = socket.create_connection((host, port), timeout=10)
+    print(f"✅ SUCCESS: Port {port} is open and reachable on {host}")
+    s.close()
+except Exception as e:
+    print(f"❌ CONNECTION FAILED: {e}")

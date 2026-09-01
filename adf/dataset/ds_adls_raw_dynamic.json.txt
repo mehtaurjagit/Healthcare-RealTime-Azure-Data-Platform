@@ -1,0 +1,27 @@
+{
+    "name": "ds_adls_raw_dynamic",
+    "properties": {
+        "linkedServiceName": {
+            "referenceName": "ls_adls_gen2",
+            "type": "LinkedServiceReference"
+        },
+        "parameters": {
+            "FolderPath": {
+                "type": "string"
+            }
+        },
+        "annotations": [],
+        "type": "Binary",
+        "typeProperties": {
+            "location": {
+                "type": "AzureBlobFSLocation",
+                "folderPath": {
+                    "value": "@dataset().FolderPath",
+                    "type": "Expression"
+                },
+                "fileSystem": "raw"
+            }
+        }
+    },
+    "type": "Microsoft.DataFactory/factories/datasets"
+}

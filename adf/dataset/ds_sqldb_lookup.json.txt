@@ -1,0 +1,13 @@
+{
+    "name": "ds_sqldb_lookup",
+    "properties": {
+        "linkedServiceName": {
+            "referenceName": "ls_sqldb_controldb",
+            "type": "LinkedServiceReference"
+        },
+        "annotations": [],
+        "type": "AzureSqlTable",
+        "schema": []
+    },
+    "type": "Microsoft.DataFactory/factories/datasets"
+}
